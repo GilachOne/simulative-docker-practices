@@ -1,0 +1,195 @@
+Verified on Linux Docker Engine, 2026-09-24
+
+$ docker build -t gilachone/simulative-practice-postgres:1.0 /opt/simulative-docker-practices/05-volumes
+Sending build context to Docker daemon  10.24kB
+
+Step 1/2 : FROM postgres:16-alpine
+ ---> 721873c34ceb
+Step 2/2 : LABEL org.opencontainers.image.title="PostgreSQL Docker practice"
+ ---> Using cache
+ ---> 4afd26679b80
+Successfully built 4afd26679b80
+Successfully tagged gilachone/simulative-practice-postgres:1.0
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-no-mount-1 --memory 192m -e POSTGRES_USER=practice -e POSTGRES_DB=practice -e POSTGRES_PASSWORD gilachone/simulative-practice-postgres:1.0
+814ebfc417defc1af0f720a8589dec3d592c01b72189590d3c8a2fca1d1eb0b1
+
+[exit=0]
+
+$ docker inspect --format '{{range .Mounts}}{{if eq .Destination "/var/lib/postgresql/data"}}{{.Name}}{{end}}{{end}}' de-practice-eb7262-no-mount-1
+0391538b831b95883cd63fbd812b4d068f7ba3133663c6ce6b1b9529611dbce1
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-no-mount-1 psql -X -v ON_ERROR_STOP=1 -U practice -d practice -At -c 'CREATE TABLE practice_marker (id integer PRIMARY KEY, note text NOT NULL);
+INSERT INTO practice_marker VALUES (1, '"'"'saved data'"'"');
+SELECT * FROM practice_marker;
+'
+CREATE TABLE
+INSERT 0 1
+1|saved data
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-no-mount-1
+de-practice-eb7262-no-mount-1
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-no-mount-2 --memory 192m -e POSTGRES_USER=practice -e POSTGRES_DB=practice -e POSTGRES_PASSWORD gilachone/simulative-practice-postgres:1.0
+07e5995f1a7350ae21f71b9fbe3caa8f12c4358ff54e3e3a4d4cf4186644f1e7
+
+[exit=0]
+
+$ docker inspect --format '{{range .Mounts}}{{if eq .Destination "/var/lib/postgresql/data"}}{{.Name}}{{end}}{{end}}' de-practice-eb7262-no-mount-2
+2673869caa4b651f2b7b77743bcab39a920567212f220c99d31e9f0810183060
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-no-mount-2 psql -X -v ON_ERROR_STOP=1 -U practice -d practice -At -c 'SELECT to_regclass('"'"'public.practice_marker'"'"') IS NULL'
+t
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-no-mount-2
+de-practice-eb7262-no-mount-2
+
+[exit=0]
+
+$ docker volume create de-practice-eb7262-data
+de-practice-eb7262-data
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-named-1 --memory 192m --mount type=volume,source=de-practice-eb7262-data,target=/var/lib/postgresql/data -e POSTGRES_USER=practice -e POSTGRES_DB=practice -e POSTGRES_PASSWORD gilachone/simulative-practice-postgres:1.0
+6f6acc2aabe9a6d395c2c62bf7dfe16945c0cb2245e2a77a93a5e82569bac28a
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-named-1 psql -X -v ON_ERROR_STOP=1 -U practice -d practice -At -c 'CREATE TABLE practice_marker (id integer PRIMARY KEY, note text NOT NULL);
+INSERT INTO practice_marker VALUES (1, '"'"'saved data'"'"');
+SELECT * FROM practice_marker;
+'
+CREATE TABLE
+INSERT 0 1
+1|saved data
+
+[exit=0]
+
+$ docker volume inspect --format '{{.Name}} {{.Driver}}' de-practice-eb7262-data
+de-practice-eb7262-data local
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-named-1
+de-practice-eb7262-named-1
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-named-2 --memory 192m --mount type=volume,source=de-practice-eb7262-data,target=/var/lib/postgresql/data -e POSTGRES_USER=practice -e POSTGRES_DB=practice -e POSTGRES_PASSWORD gilachone/simulative-practice-postgres:1.0
+be4c5dbd737ac7f903a02cf854c9c94d9f378d1632147b5ccc854f73a2c10a7f
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-named-2 psql -X -v ON_ERROR_STOP=1 -U practice -d practice -At -c 'SELECT note FROM practice_marker WHERE id=1'
+saved data
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-named-2
+de-practice-eb7262-named-2
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-anonymous-1 --memory 192m --mount type=volume,target=/var/lib/postgresql/data -e POSTGRES_USER=practice -e POSTGRES_DB=practice -e POSTGRES_PASSWORD gilachone/simulative-practice-postgres:1.0
+cfc360fa2b1ec590bd62aafc221726a2a413de6edfd459b9a158b3d6817ad8c5
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-anonymous-1 psql -X -v ON_ERROR_STOP=1 -U practice -d practice -At -c 'CREATE TABLE practice_marker (id integer PRIMARY KEY, note text NOT NULL);
+INSERT INTO practice_marker VALUES (1, '"'"'saved data'"'"');
+SELECT * FROM practice_marker;
+'
+CREATE TABLE
+INSERT 0 1
+1|saved data
+
+[exit=0]
+
+$ docker inspect --format '{{range .Mounts}}{{if eq .Destination "/var/lib/postgresql/data"}}{{.Name}}{{end}}{{end}}' de-practice-eb7262-anonymous-1
+816a7f3bc166e64f254b20d9c36eb590ec10e7dbebd98d62a5c1e24cb3b8a5e6
+
+[exit=0]
+
+$ docker volume inspect --format '{{.Name}} {{.Driver}}' 816a7f3bc166e64f254b20d9c36eb590ec10e7dbebd98d62a5c1e24cb3b8a5e6
+816a7f3bc166e64f254b20d9c36eb590ec10e7dbebd98d62a5c1e24cb3b8a5e6 local
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-anonymous-1
+de-practice-eb7262-anonymous-1
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-anonymous-2 --memory 192m --mount type=volume,source=816a7f3bc166e64f254b20d9c36eb590ec10e7dbebd98d62a5c1e24cb3b8a5e6,target=/var/lib/postgresql/data -e POSTGRES_USER=practice -e POSTGRES_DB=practice -e POSTGRES_PASSWORD gilachone/simulative-practice-postgres:1.0
+879e94cbff62f9735d97fb338f8eb9a274b6195a33b269fb4b6f4b8b71553b8c
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-anonymous-2 psql -X -v ON_ERROR_STOP=1 -U practice -d practice -At -c 'SELECT note FROM practice_marker WHERE id=1'
+saved data
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-anonymous-2
+de-practice-eb7262-anonymous-2
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-bind-1 --memory 192m --mount type=bind,source=/opt/simulative-docker-practices/work/de-practice-eb7262/bind,target=/var/lib/postgresql/data -e POSTGRES_USER=practice -e POSTGRES_DB=practice -e POSTGRES_PASSWORD gilachone/simulative-practice-postgres:1.0
+31c7869b6a1472126037a769b68898a1d339d36490393a1445203d685fe973bf
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-bind-1 psql -X -v ON_ERROR_STOP=1 -U practice -d practice -At -c 'CREATE TABLE practice_marker (id integer PRIMARY KEY, note text NOT NULL);
+INSERT INTO practice_marker VALUES (1, '"'"'saved data'"'"');
+SELECT * FROM practice_marker;
+'
+CREATE TABLE
+INSERT 0 1
+1|saved data
+
+[exit=0]
+
+$ docker inspect --format '{{range .Mounts}}{{.Type}} {{.Destination}}{{end}}' de-practice-eb7262-bind-1
+bind /var/lib/postgresql/data
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-bind-1
+de-practice-eb7262-bind-1
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-bind-2 --memory 192m --mount type=bind,source=/opt/simulative-docker-practices/work/de-practice-eb7262/bind,target=/var/lib/postgresql/data -e POSTGRES_USER=practice -e POSTGRES_DB=practice -e POSTGRES_PASSWORD gilachone/simulative-practice-postgres:1.0
+e722db431327d06cc51f74ad01ad276b71531cdc4e9e4450ab1119c25c22e3b8
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-bind-2 psql -X -v ON_ERROR_STOP=1 -U practice -d practice -At -c 'SELECT note FROM practice_marker WHERE id=1'
+saved data
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-bind-2
+de-practice-eb7262-bind-2
+
+[exit=0]
+
+RESULT: PASS

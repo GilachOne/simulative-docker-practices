@@ -1,0 +1,132 @@
+Verified on Linux Docker Engine, 2026-09-24
+
+$ docker build -t gilachone/simulative-practice-images:1.0 /opt/simulative-docker-practices/01-images/v1.0
+Sending build context to Docker daemon  3.072kB
+
+Step 1/4 : FROM python:3.12-slim
+3.12-slim: Pulling from library/python
+Digest: sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
+Status: Downloaded newer image for python:3.12-slim
+ ---> 2f17fc044b57
+Step 2/4 : WORKDIR /app
+ ---> Running in 271b17ac2831
+ ---> Removed intermediate container 271b17ac2831
+ ---> d712606df07c
+Step 3/4 : COPY message.txt .
+ ---> 90bd01626a1a
+Step 4/4 : CMD ["python", "-c", "from pathlib import Path; print(Path('message.txt').read_text().strip())"]
+ ---> Running in 5ca3952806f9
+ ---> Removed intermediate container 5ca3952806f9
+ ---> 5a78439f07d1
+Successfully built 5a78439f07d1
+Successfully tagged gilachone/simulative-practice-images:1.0
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+
+[exit=0]
+
+$ docker run --rm gilachone/simulative-practice-images:1.0
+Docker Images practice: version 1.0
+
+[exit=0]
+
+$ docker image inspect --format '{{.Id}}' gilachone/simulative-practice-images:1.0
+sha256:5a78439f07d16c79711a49f29517a3e46decd90352684d64990d819d37d69720
+
+[exit=0]
+
+$ docker build -t gilachone/simulative-practice-images:2.0 /opt/simulative-docker-practices/01-images/v2.0
+Sending build context to Docker daemon  3.072kB
+
+Step 1/4 : FROM python:3.12-slim
+ ---> 2f17fc044b57
+Step 2/4 : WORKDIR /app
+ ---> Using cache
+ ---> d712606df07c
+Step 3/4 : COPY message.txt .
+ ---> 57e8230b6405
+Step 4/4 : CMD ["python", "-c", "from pathlib import Path; print(Path('message.txt').read_text().strip())"]
+ ---> Running in 3f2aee0ccba8
+ ---> Removed intermediate container 3f2aee0ccba8
+ ---> d66abc4131dd
+Successfully built d66abc4131dd
+Successfully tagged gilachone/simulative-practice-images:2.0
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+
+[exit=0]
+
+$ docker run --rm gilachone/simulative-practice-images:2.0
+Docker Images practice: version 2.0
+
+[exit=0]
+
+$ docker image inspect --format '{{.Id}}' gilachone/simulative-practice-images:2.0
+sha256:d66abc4131dda4030635392db70e62d0e8d3d127bccf332eb7d1cdeaca5bd6bb
+
+[exit=0]
+
+$ docker image ls gilachone/simulative-practice-images
+IMAGE                                      ID             DISK USAGE   CONTENT SIZE   EXTRA
+gilachone/simulative-practice-images:1.0   5a78439f07d1        177MB         43.2MB        
+gilachone/simulative-practice-images:2.0   d66abc4131dd        177MB         43.2MB        
+WARNING: This output is designed for human readability. For machine-readable output, please use --format.
+
+[exit=0]
+
+$ docker history gilachone/simulative-practice-images:2.0
+IMAGE          CREATED         CREATED BY                                      SIZE      COMMENT
+d66abc4131dd   1 second ago    /bin/sh -c #(nop)  CMD ["python" "-c" "from …   0B        
+57e8230b6405   2 seconds ago   /bin/sh -c #(nop) COPY file:e8c90da143605eff…   12.3kB    
+d712606df07c   5 seconds ago   /bin/sh -c #(nop) WORKDIR /app                  8.19kB    
+2f17fc044b57   5 days ago      CMD ["python3"]                                 0B        buildkit.dockerfile.v0
+<missing>      5 days ago      RUN /bin/sh -c set -eux;  for src in idle3 p…   16.4kB    buildkit.dockerfile.v0
+<missing>      5 days ago      RUN /bin/sh -c set -eux;   savedAptMark="$(a…   41.4MB    buildkit.dockerfile.v0
+<missing>      5 days ago      ENV PYTHON_SHA256=5c8462af5790baf43a321a1559…   0B        buildkit.dockerfile.v0
+<missing>      5 days ago      ENV PYTHON_VERSION=3.12.14                      0B        buildkit.dockerfile.v0
+<missing>      5 days ago      ENV GPG_KEY=7169605F62C751356D054A26A821E680…   0B        buildkit.dockerfile.v0
+<missing>      5 days ago      RUN /bin/sh -c set -eux;  apt-get update;  a…   4.95MB    buildkit.dockerfile.v0
+<missing>      5 days ago      ENV LANG=C.UTF-8                                0B        buildkit.dockerfile.v0
+<missing>      5 days ago      ENV PATH=/usr/local/bin:/usr/local/sbin:/usr…   0B        buildkit.dockerfile.v0
+<missing>      6 days ago      # debian.sh --arch 'amd64' out/ 'trixie' '@1…   87.6MB    debuerreotype 0.17
+
+[exit=0]
+
+$ docker tag gilachone/simulative-practice-images:2.0 gilachone/simulative-practice-images:temporary-check
+
+[exit=0]
+
+$ docker image inspect --format '{{.Id}}' gilachone/simulative-practice-images:temporary-check
+sha256:d66abc4131dda4030635392db70e62d0e8d3d127bccf332eb7d1cdeaca5bd6bb
+
+[exit=0]
+
+$ docker save -o /opt/simulative-docker-practices/work/image.tar gilachone/simulative-practice-images:temporary-check
+
+[exit=0]
+
+$ docker image rm gilachone/simulative-practice-images:temporary-check
+Untagged: gilachone/simulative-practice-images:temporary-check
+
+[exit=0]
+
+$ docker load -i /opt/simulative-docker-practices/work/image.tar
+Loaded image: gilachone/simulative-practice-images:temporary-check
+
+[exit=0]
+
+$ docker image inspect --format '{{.Id}}' gilachone/simulative-practice-images:temporary-check
+sha256:d66abc4131dda4030635392db70e62d0e8d3d127bccf332eb7d1cdeaca5bd6bb
+
+[exit=0]
+
+$ docker image rm gilachone/simulative-practice-images:temporary-check
+Untagged: gilachone/simulative-practice-images:temporary-check
+
+[exit=0]
+
+RESULT: PASS

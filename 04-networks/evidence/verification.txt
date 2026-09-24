@@ -1,0 +1,361 @@
+Verified on Linux Docker Engine, 2026-09-24
+
+$ docker build -t gilachone/simulative-practice-postgres:1.0 /opt/simulative-docker-practices/04-networks/postgres
+Sending build context to Docker daemon  2.048kB
+
+Step 1/2 : FROM postgres:16-alpine
+ ---> 721873c34ceb
+Step 2/2 : LABEL org.opencontainers.image.title="PostgreSQL Docker practice"
+ ---> Running in 4b158f0e0194
+ ---> Removed intermediate container 4b158f0e0194
+ ---> 4afd26679b80
+Successfully built 4afd26679b80
+Successfully tagged gilachone/simulative-practice-postgres:1.0
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+
+[exit=0]
+
+$ docker build -t gilachone/simulative-practice-networks:1.0 /opt/simulative-docker-practices/04-networks/python
+Sending build context to Docker daemon  4.608kB
+
+Step 1/7 : FROM python:3.12-slim
+ ---> 2f17fc044b57
+Step 2/7 : WORKDIR /app
+ ---> Using cache
+ ---> d712606df07c
+Step 3/7 : COPY requirements.txt .
+ ---> 8268cbe6aaba
+Step 4/7 : RUN pip install --no-cache-dir -r requirements.txt
+ ---> Running in 7262b3b6b9a6
+Collecting psycopg2-binary==2.9.10 (from -r requirements.txt (line 1))
+  Downloading psycopg2_binary-2.9.10-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.9 kB)
+Downloading psycopg2_binary-2.9.10-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.0/3.0 MB 27.1 MB/s eta 0:00:00
+Installing collected packages: psycopg2-binary
+Successfully installed psycopg2-binary-2.9.10
+[91mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+[0m[91m
+[notice] A new release of pip is available: 25.0.1 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip
+[0m ---> Removed intermediate container 7262b3b6b9a6
+ ---> 4048187f457a
+Step 5/7 : COPY app.py .
+ ---> 06133ed3f65f
+Step 6/7 : USER 10001:10001
+ ---> Running in adff9077a716
+ ---> Removed intermediate container adff9077a716
+ ---> 322eb0a175b0
+Step 7/7 : CMD ["python", "app.py"]
+ ---> Running in e9b03d3b09d6
+ ---> Removed intermediate container e9b03d3b09d6
+ ---> 8bfbfc93ec21
+Successfully built 8bfbfc93ec21
+Successfully tagged gilachone/simulative-practice-networks:1.0
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+
+[exit=0]
+
+$ docker pull nicolaka/netshoot:latest
+latest: Pulling from nicolaka/netshoot
+f4fcdd1672ed: Pulling fs layer
+72cec7a9d7fd: Pulling fs layer
+55afa1ecc21d: Pulling fs layer
+fe519894e9d4: Pulling fs layer
+0853a899d711: Pulling fs layer
+bea223344dda: Pulling fs layer
+de71a8dba62c: Pulling fs layer
+ebb4e70d3b0a: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+dcf0aac248dc: Pulling fs layer
+e831eb9a722d: Pulling fs layer
+0f46943e91ef: Pulling fs layer
+ff55a763fbcf: Pulling fs layer
+6dfe05fc89ee: Pulling fs layer
+5a31b520f7cd: Pulling fs layer
+4f4fb700ef54: Already exists
+f4fcdd1672ed: Download complete
+5a31b520f7cd: Download complete
+ff55a763fbcf: Download complete
+6dfe05fc89ee: Download complete
+55afa1ecc21d: Download complete
+72cec7a9d7fd: Download complete
+55afa1ecc21d: Pull complete
+dad86fcd0eb6: Download complete
+e831eb9a722d: Download complete
+0f46943e91ef: Download complete
+de71a8dba62c: Download complete
+0853a899d711: Download complete
+dcf0aac248dc: Download complete
+ebb4e70d3b0a: Download complete
+bea223344dda: Download complete
+fe519894e9d4: Download complete
+fe519894e9d4: Pull complete
+0853a899d711: Pull complete
+bea223344dda: Pull complete
+de71a8dba62c: Pull complete
+ebb4e70d3b0a: Pull complete
+72cec7a9d7fd: Pull complete
+4f4fb700ef54: Pull complete
+e831eb9a722d: Pull complete
+dcf0aac248dc: Pull complete
+ff55a763fbcf: Pull complete
+0f46943e91ef: Pull complete
+6dfe05fc89ee: Pull complete
+f4fcdd1672ed: Pull complete
+5a31b520f7cd: Pull complete
+Digest: sha256:b09d9b21381f47a79b3cbcb30da25266dc17186ea00ae65e99fdc51396f48e70
+Status: Downloaded newer image for nicolaka/netshoot:latest
+docker.io/nicolaka/netshoot:latest
+
+[exit=0]
+
+$ docker image inspect --format '{{json .RepoDigests}}' nicolaka/netshoot:latest
+["nicolaka/netshoot@sha256:b09d9b21381f47a79b3cbcb30da25266dc17186ea00ae65e99fdc51396f48e70"]
+
+[exit=0]
+
+$ docker network ls --format '{{.Name}} {{.Driver}}'
+bridge bridge
+host host
+none null
+simulative-airflow-project_default bridge
+simulative-citybikes-project_default bridge
+simulative-docker-final_shop bridge
+simulative-hive-final_default bridge
+simulative-spark-project_default bridge
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-net-a nicolaka/netshoot:latest sleep infinity
+9c253268129f75ff0437d160c43b5edd074a0dd49a1c093f546e175baeda2ab3
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-net-b nicolaka/netshoot:latest sleep infinity
+1e134f99f3acd41442874dcad2c1acff1f0be71932493f68378d059e555b9c55
+
+[exit=0]
+
+$ docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' de-practice-eb7262-net-b
+172.17.0.3
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-net-a ping -c 1 -W 2 172.17.0.3
+PING 172.17.0.3 (172.17.0.3) 56(84) bytes of data.
+64 bytes from 172.17.0.3: icmp_seq=1 ttl=64 time=0.105 ms
+
+--- 172.17.0.3 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.105/0.105/0.105/0.000 ms
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-net-a ping -c 1 -W 2 de-practice-eb7262-net-b
+ping: de-practice-eb7262-net-b: Name does not resolve
+
+[exit=2]
+
+$ docker network create --driver bridge de-practice-eb7262-bridge1
+a316f4f2fda8b4bc8f19cf48db320e158f03ee2f0cceae7d43216d40ae3c6633
+
+[exit=0]
+
+$ docker network create --driver bridge de-practice-eb7262-bridge2
+1696aacf8d51e67d4f1bf0737e0e0c2e3f981f1c5dc90147ef88c0e126d0d448
+
+[exit=0]
+
+$ docker network connect de-practice-eb7262-bridge1 de-practice-eb7262-net-a
+
+[exit=0]
+
+$ docker network disconnect bridge de-practice-eb7262-net-a
+
+[exit=0]
+
+$ docker network connect de-practice-eb7262-bridge1 de-practice-eb7262-net-b
+
+[exit=0]
+
+$ docker network disconnect bridge de-practice-eb7262-net-b
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-net-a ping -c 1 -W 2 de-practice-eb7262-net-b
+PING de-practice-eb7262-net-b (172.23.0.3) 56(84) bytes of data.
+64 bytes from de-practice-eb7262-net-b.de-practice-eb7262-bridge1 (172.23.0.3): icmp_seq=1 ttl=64 time=0.101 ms
+
+--- de-practice-eb7262-net-b ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.101/0.101/0.101/0.000 ms
+
+[exit=0]
+
+$ docker network inspect --format '{{.Name}} {{.Driver}} {{len .Containers}}' de-practice-eb7262-bridge1
+de-practice-eb7262-bridge1 bridge 2
+
+[exit=0]
+
+$ docker network connect de-practice-eb7262-bridge2 de-practice-eb7262-net-b
+
+[exit=0]
+
+$ docker inspect --format '{{json .NetworkSettings.Networks}}' de-practice-eb7262-net-b
+{"de-practice-eb7262-bridge1":{"IPAMConfig":{"IPv4Address":"","IPv6Address":""},"Links":null,"Aliases":[],"DriverOpts":{},"GwPriority":0,"NetworkID":"a316f4f2fda8b4bc8f19cf48db320e158f03ee2f0cceae7d43216d40ae3c6633","EndpointID":"b33d57bf08c35b1f4909de715883680000d163f721739abfb3c18948c5805bc6","Gateway":"172.23.0.1","IPAddress":"172.23.0.3","MacAddress":"1a:39:91:bb:e1:7b","IPPrefixLen":16,"IPv6Gateway":"","GlobalIPv6Address":"","GlobalIPv6PrefixLen":0,"DNSNames":["de-practice-eb7262-net-b","1e134f99f3ac"]},"de-practice-eb7262-bridge2":{"IPAMConfig":{"IPv4Address":"","IPv6Address":""},"Links":null,"Aliases":[],"DriverOpts":{},"GwPriority":0,"NetworkID":"1696aacf8d51e67d4f1bf0737e0e0c2e3f981f1c5dc90147ef88c0e126d0d448","EndpointID":"8c9a8d9379b2d4292ec2ad1dce49136ab856804965b086e689b76b3ce8e2fe33","Gateway":"172.24.0.1","IPAddress":"172.24.0.2","MacAddress":"12:97:1c:a7:16:97","IPPrefixLen":16,"IPv6Gateway":"","GlobalIPv6Address":"","GlobalIPv6PrefixLen":0,"DNSNames":["de-practice-eb7262-net-b","1e134f99f3ac"]}}
+
+[exit=0]
+
+$ docker network disconnect de-practice-eb7262-bridge1 de-practice-eb7262-net-b
+
+[exit=0]
+
+$ docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' de-practice-eb7262-net-b
+172.24.0.2
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-net-a ping -c 1 -W 2 172.24.0.2
+PING 172.24.0.2 (172.24.0.2) 56(84) bytes of data.
+
+--- 172.24.0.2 ping statistics ---
+1 packets transmitted, 0 received, 100% packet loss, time 0ms
+
+
+[exit=1]
+
+$ docker network connect de-practice-eb7262-bridge2 de-practice-eb7262-net-a
+
+[exit=0]
+
+$ docker network disconnect de-practice-eb7262-bridge1 de-practice-eb7262-net-a
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-net-a ping -c 1 -W 2 de-practice-eb7262-net-b
+PING de-practice-eb7262-net-b (172.24.0.2) 56(84) bytes of data.
+64 bytes from de-practice-eb7262-net-b.de-practice-eb7262-bridge2 (172.24.0.2): icmp_seq=1 ttl=64 time=0.196 ms
+
+--- de-practice-eb7262-net-b ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.196/0.196/0.196/0.000 ms
+
+[exit=0]
+
+$ docker run --rm --network host nicolaka/netshoot:latest ping -c 1 127.0.0.1
+PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.098 ms
+
+--- 127.0.0.1 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.098/0.098/0.098/0.000 ms
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-none --network none nicolaka/netshoot:latest sleep infinity
+760ec2150ab772c61b01a43413384461d58133e7309070b8d108e029e23c3e11
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-none ip -brief address
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-none ping -c 1 -W 2 172.24.0.2
+ping: connect: Network unreachable
+
+[exit=2]
+
+$ docker network connect de-practice-eb7262-bridge2 de-practice-eb7262-none
+Error response from daemon: container cannot be connected to multiple networks with one of the networks in private (none) mode
+
+[exit=1]
+
+$ docker rm -f de-practice-eb7262-none
+de-practice-eb7262-none
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-none-recreated --network de-practice-eb7262-bridge2 nicolaka/netshoot:latest sleep infinity
+fa32095dc74a316da96f5b20f3ff499c78738f6541f62dce94a55bc239c38745
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-none-recreated ping -c 1 -W 2 de-practice-eb7262-net-b
+PING de-practice-eb7262-net-b (172.24.0.2) 56(84) bytes of data.
+64 bytes from de-practice-eb7262-net-b.de-practice-eb7262-bridge2 (172.24.0.2): icmp_seq=1 ttl=64 time=0.108 ms
+
+--- de-practice-eb7262-net-b ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.108/0.108/0.108/0.000 ms
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-db --memory 192m --network de-practice-eb7262-bridge1 -p 127.0.0.1:15439:5432 -e POSTGRES_USER=practice -e POSTGRES_DB=practice -e POSTGRES_PASSWORD gilachone/simulative-practice-postgres:1.0
+8bde202f1b702cc13af4b53d36819a6706fc6dcbb688a697fd4d9c45b67f3bbd
+
+[exit=0]
+
+$ docker inspect --format '{{range .Mounts}}{{if eq .Destination "/var/lib/postgresql/data"}}{{.Name}}{{end}}{{end}}' de-practice-eb7262-db
+b852c8652682ef82a065f7fba31871d66ce44d8343621852d9964e286ff68850
+
+[exit=0]
+
+$ docker run --rm --network de-practice-eb7262-bridge1 -e DB_PASSWORD -e DB_HOST=de-practice-eb7262-db gilachone/simulative-practice-networks:1.0
+[[1, "Anna"], [2, "Boris"], [3, "Vera"]]
+
+[exit=0]
+
+$ docker run --rm --network de-practice-eb7262-bridge1 -e DB_PASSWORD -e DB_HOST=de-practice-eb7262-db gilachone/simulative-practice-networks:1.0
+[[1, "Anna"], [2, "Boris"], [3, "Vera"]]
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-db psql -X -v ON_ERROR_STOP=1 -U practice -d practice -At -c 'SELECT count(*) FROM users'
+3
+
+[exit=0]
+
+$ docker run --rm --network de-practice-eb7262-bridge2 -e DB_PASSWORD -e DB_HOST=de-practice-eb7262-db gilachone/simulative-practice-networks:1.0
+Database connection or query failed
+
+[exit=1]
+
+$ docker run --rm --network none -e DB_PASSWORD -e DB_HOST=de-practice-eb7262-db gilachone/simulative-practice-networks:1.0
+Database connection or query failed
+
+[exit=1]
+
+$ docker run --rm --network host -e DB_PASSWORD -e DB_HOST=127.0.0.1 -e DB_PORT=15439 gilachone/simulative-practice-networks:1.0
+[[1, "Anna"], [2, "Boris"], [3, "Vera"]]
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-db
+de-practice-eb7262-db
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-net-a
+de-practice-eb7262-net-a
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-net-b
+de-practice-eb7262-net-b
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-none-recreated
+de-practice-eb7262-none-recreated
+
+[exit=0]
+
+RESULT: PASS

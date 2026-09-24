@@ -1,0 +1,9 @@
+.env
+.git
+__pycache__
+*.pyc
+ignored.txt
+evidence
+README.md
+submit.txt
+ASSIGNMENT.md

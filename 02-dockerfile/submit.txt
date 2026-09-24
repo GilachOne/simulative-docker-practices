@@ -1,0 +1,7 @@
+Практика Docker Dockerfile.
+
+GitHub: https://github.com/GilachOne/simulative-docker-practices/tree/main/02-dockerfile
+
+В архиве файлы для сборки, README и результаты выполнения команд в evidence/.
+
+Docker Hub: https://hub.docker.com/r/gilachone/simulative-practice-dockerfile

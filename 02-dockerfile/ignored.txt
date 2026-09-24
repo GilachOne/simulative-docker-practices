@@ -1,0 +1,1 @@
+This harmless test file must NOT be copied into the image.

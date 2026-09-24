@@ -1,0 +1,30 @@
+name: simulative-volume-gui
+services:
+  postgres:
+    image: gilachone/simulative-practice-postgres:1.0
+    build: .
+    hostname: practice-db
+    environment:
+      POSTGRES_USER: practice
+      POSTGRES_DB: practice
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run init_pgadmin.py}
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    mem_limit: 192m
+  pgadmin:
+    image: dpage/pgadmin4:9.18
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:?Run init_pgadmin.py}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+      PGADMIN_DISABLE_POSTFIX: '1'
+      PGPASS_FILE: /pgpass
+    ports:
+      - '127.0.0.1:15080:80'
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json:ro
+      - ./work/pgpass:/pgpass:ro
+    mem_limit: 384m
+volumes:
+  dbdata:

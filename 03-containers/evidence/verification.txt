@@ -1,0 +1,145 @@
+Verified on Linux Docker Engine, 2026-09-24
+
+$ docker build -t gilachone/simulative-practice-containers:1.0 /opt/simulative-docker-practices/03-containers
+Sending build context to Docker daemon  4.096kB
+
+Step 1/10 : FROM python:3.12-slim
+ ---> 2f17fc044b57
+Step 2/10 : ARG APP_VERSION=1.0
+ ---> Using cache
+ ---> 9641e90c1273
+Step 3/10 : LABEL org.opencontainers.image.title="Python Docker practice"       org.opencontainers.image.version=$APP_VERSION
+ ---> Using cache
+ ---> 559e3e9cf05b
+Step 4/10 : ENV APP_VERSION=$APP_VERSION APP_NAME=student PYTHONUNBUFFERED=1
+ ---> Using cache
+ ---> 76e4864ceb9a
+Step 5/10 : WORKDIR /app
+ ---> Using cache
+ ---> a98ae6c9d668
+Step 6/10 : COPY . .
+ ---> Using cache
+ ---> 14897b31872a
+Step 7/10 : RUN python -m py_compile app.py
+ ---> Using cache
+ ---> 142b9f73064c
+Step 8/10 : USER 10001:10001
+ ---> Using cache
+ ---> 600b942f270a
+Step 9/10 : ENTRYPOINT ["python", "app.py"]
+ ---> Using cache
+ ---> 4495852ad2c9
+Step 10/10 : CMD ["--name", "student"]
+ ---> Using cache
+ ---> be763c982f1b
+Successfully built be763c982f1b
+Successfully tagged gilachone/simulative-practice-containers:1.0
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+
+[exit=0]
+
+$ docker run -d --name de-practice-eb7262-run gilachone/simulative-practice-containers:1.0 --wait
+53a4adaf85b42b8e38a3ab4f8b549c738723605e583d74ce34e7b2ee285e2b51
+
+[exit=0]
+
+$ docker exec de-practice-eb7262-run python -c 'from pathlib import Path; Path('"'"'/tmp/check.txt'"'"').write_text('"'"'container data'"'"')'
+
+[exit=0]
+
+$ docker cp de-practice-eb7262-run:/tmp/check.txt /opt/simulative-docker-practices/work/check.txt
+
+[exit=0]
+
+$ docker diff de-practice-eb7262-run
+C /tmp
+A /tmp/check.txt
+
+[exit=0]
+
+$ docker top de-practice-eb7262-run
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+10001               166407              166383              10                  10:18               ?                   00:00:00            python app.py --wait
+
+[exit=0]
+
+$ docker stats --no-stream --format '{{.Name}} {{.MemUsage}}' de-practice-eb7262-run
+de-practice-eb7262-run 5.602MiB / 3.817GiB
+
+[exit=0]
+
+$ docker pause de-practice-eb7262-run
+de-practice-eb7262-run
+
+[exit=0]
+
+$ docker inspect --format '{{.State.Paused}}' de-practice-eb7262-run
+true
+
+[exit=0]
+
+$ docker unpause de-practice-eb7262-run
+de-practice-eb7262-run
+
+[exit=0]
+
+$ docker restart de-practice-eb7262-run
+de-practice-eb7262-run
+
+[exit=0]
+
+$ docker stop de-practice-eb7262-run
+de-practice-eb7262-run
+
+[exit=0]
+
+$ docker inspect --format '{{.State.Status}}' de-practice-eb7262-run
+exited
+
+[exit=0]
+
+$ docker start de-practice-eb7262-run
+de-practice-eb7262-run
+
+[exit=0]
+
+$ docker rename de-practice-eb7262-run de-practice-eb7262-renamed
+
+[exit=0]
+
+$ docker logs de-practice-eb7262-renamed
+Hello, student! Version: 1.0
+Hello, student! Version: 1.0
+Hello, student! Version: 1.0
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-renamed
+de-practice-eb7262-renamed
+
+[exit=0]
+
+$ docker create --name de-practice-eb7262-created gilachone/simulative-practice-containers:1.0 --name Created
+8c7a1d6a028476b15b4cd35fdeb3f2d0e1ae63a6bc0468db8cebefc4933613c0
+
+[exit=0]
+
+$ docker inspect --format '{{.State.Status}}' de-practice-eb7262-created
+created
+
+[exit=0]
+
+$ docker start -a de-practice-eb7262-created
+Hello, Created! Version: 1.0
+
+[exit=0]
+
+$ docker rm -f de-practice-eb7262-created
+de-practice-eb7262-created
+
+[exit=0]
+
+RESULT: PASS

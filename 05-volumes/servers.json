@@ -1,0 +1,1 @@
+{"Servers":{"1":{"Name":"Docker Volume practice","Group":"Servers","Host":"postgres","Port":5432,"MaintenanceDB":"practice","Username":"practice","SSLMode":"prefer","PassFile":"/var/lib/pgadmin/.pgpass"}}}

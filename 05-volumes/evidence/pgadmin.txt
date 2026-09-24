@@ -1,0 +1,21 @@
+PgAdmin 4 9.18, PostgreSQL 16, 2026-09-24
+Query Tool, database practice, server Docker Volume practice.
+
+CREATE TABLE practice_marker (id integer PRIMARY KEY, note text NOT NULL);
+INSERT INTO practice_marker VALUES (1, 'saved data');
+SELECT * FROM practice_marker;
+
+Visible Data Output: id=1, note=saved data. Total rows: 1.
+Query complete 00:00:00.486.
+
+Container recreated from shell with the same named volume:
+docker compose -f pgadmin-compose.yaml up -d --force-recreate postgres
+Result: Recreated, Started.
+
+Query Tool: SELECT * FROM practice_marker;
+PgAdmin reported lost connection after recreation. Selected Continue to reconnect.
+Visible Data Output after reconnect: id=1, note=saved data. Total rows: 1.
+Query complete 00:00:00.387.
+
+RESULT: PASS. Named-volume data survived container recreation.
+The other storage scenarios are recorded in verification.txt (psql).
